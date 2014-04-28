@@ -2,29 +2,37 @@ package com.firstandroid.activity;
 
 
 import android.app.Activity;
+import android.app.ListActivity;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity implements OnItemClickListener {
 	private LinearLayout nameContainer;
 	private LinearLayout addressContainer;
 	private LinearLayout parentContainer;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		/*
 		 * Complete Code for UI
@@ -44,6 +52,9 @@ public class MainActivity extends Activity {
 	     * Combine Code and XML (recommended)
 	     * 
 	     */
+		
+		//simple controllers
+		/*
 		setContentView(R.layout.main);
 		TextView nameValue = (TextView)findViewById(R.id.nameValue);
 		nameValue.setText("Lei Yuan");
@@ -66,6 +77,18 @@ public class MainActivity extends Activity {
 	  
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
+		*/
+		/**
+		 * view lists and adapters
+		 * 
+		 */
+		ListView lv = getListView();
+		Cursor c = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null,null,null,ContactsContract.Contacts.DISPLAY_NAME+" asc");
+		String[] cols = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this.getBaseContext(),android.R.layout.simple_list_item_1, c,cols,new int[]{android.R.id.text1},0);
+		this.setListAdapter(adapter);
+		lv.setOnItemClickListener(this);
+		
 	}
 	
 	
@@ -121,16 +144,28 @@ public class MainActivity extends Activity {
 		return true;
 		
 	}
-    public void myClickHandler(View target){
-    	switch(target.getId()){
-    		case R.id.iconButton:
-    			Intent intent = new Intent(Intent.ACTION_VIEW);
-    			intent.setData(Uri.parse("https://www.google.com/#q=lei+yuan"));
-    			this.startActivity(intent);
-    		case R.id.steakCB:
-    			if(((CheckBox)target).isChecked()){
-    				Log.v("Steak Checkt", "Steak has been checked");
-    			}
-    	}
+	
+//    public void myClickHandler(View target){
+//    	switch(target.getId()){
+//    		case R.id.iconButton:
+//    			Intent intent = new Intent(Intent.ACTION_VIEW);
+//    			intent.setData(Uri.parse("https://www.google.com/#q=lei+yuan"));
+//    			this.startActivity(intent);
+//    		case R.id.steakCB:
+//    			if(((CheckBox)target).isChecked()){
+//    				Log.v("Steak Checkt", "Steak has been checked");
+//    			}
+//    	}
+//    }
+    
+    @Override
+    public void onItemClick(AdapterView<?> adView, View target, int position, long id) {
+    Log.v("ListViewActivity", "in onItemClick with " + ((TextView) target).getText()
+    +
+    ". Position = " + position + ". Id = " + id);
+    Uri selectedPerson = ContentUris.withAppendedId(
+    		ContactsContract.Contacts.CONTENT_URI, id);
+    Intent intent = new Intent(Intent.ACTION_VIEW, selectedPerson);
+    startActivity(intent);
     }
 }
