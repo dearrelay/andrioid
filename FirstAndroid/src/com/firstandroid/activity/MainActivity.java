@@ -85,7 +85,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		ListView lv = getListView();
 		Cursor c = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null,null,null,ContactsContract.Contacts.DISPLAY_NAME+" asc");
 		String[] cols = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this.getBaseContext(),android.R.layout.simple_list_item_1, c,cols,new int[]{android.R.id.text1},0);
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1, c,cols,new int[]{android.R.id.text1},0);
 		this.setListAdapter(adapter);
 		lv.setOnItemClickListener(this);
 		
